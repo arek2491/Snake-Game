@@ -7,10 +7,9 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.security.Key;
 import java.util.*;
 
-import static java.awt.Color.red;
+
 
 
 public class MyPanel extends JPanel implements ActionListener, KeyListener{
