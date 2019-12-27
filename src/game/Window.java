@@ -1,10 +1,11 @@
 package game;
 import java.awt.event.KeyListener;
+import java.io.FileNotFoundException;
 import javax.swing.*;
 
 public class Window extends JFrame {
 
-    public Window() {
+    public Window() throws FileNotFoundException {
         super("S.N.A.K.E");
         JPanel panel = new MyPanel();
         addKeyListener((KeyListener) panel);

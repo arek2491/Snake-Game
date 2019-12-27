@@ -4,6 +4,9 @@ import javax.swing.*;
 import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.security.Key;
 import java.util.*;
 
@@ -36,9 +39,15 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener{
    public int lastUsedKey;
    public boolean lastUsedDirection;
    public JLabel score;
+   public String stringValue;
+   public int intValue;
+   public JLabel scoreValue;
+   public JLabel bestScore;
+   public JLabel bestScoreLabel;
 
 
-   MyPanel() {
+
+   MyPanel() throws FileNotFoundException {
         addKeyListener(this);
 
         setBackground(Color.black);
@@ -56,14 +65,32 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener{
         leftDir = false;
         gameGoOn = true;
         snake = new ArrayList<>();
+       score = new JLabel();
+       score.setFont(score.getFont().deriveFont(15.0f));
+       score.setForeground(Color.red);
+       score.setBounds(1,-40,90,100);
+       score.setText("Your score: ");
+       add(score);
+       scoreValue = new JLabel();
+       scoreValue.setFont(score.getFont().deriveFont(15.0f));
+       scoreValue.setForeground(Color.red);
+       scoreValue.setBounds(90,-40,100,100);
+       add(scoreValue);
+       bestScore = new JLabel();
+       bestScore.setFont(bestScore.getFont().deriveFont(15.0f));
+       bestScore.setForeground(Color.green);
+       bestScore.setBounds(660, -40, 100,100);
+       bestScore.setText(getBestScore());
+       add(bestScore);
+       bestScoreLabel = new JLabel();
+       bestScoreLabel.setFont(bestScoreLabel.getFont().deriveFont(15.0f));
+       bestScoreLabel.setForeground(Color.green);
+       bestScoreLabel.setBounds(570,-40,100,100);
+       bestScoreLabel.setText("Best Score: ");
+       add(bestScoreLabel);
 
-
-
-        initGame();
-        initFood();
-        setScore();
-
-
+       initGame();
+       initFood();
 
     }
     public void initGame() {
@@ -85,28 +112,36 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener{
            while (setFoodX % 10 != 0) {
                setFoodX = generator.nextInt(720);
            }
-           setFoodY = generator.nextInt(500);
+           setFoodY = generator.nextInt(450)+40;
            while (setFoodY % 10 != 0) {
-               setFoodY = generator.nextInt(500);
+               setFoodY = generator.nextInt(450)+40;
            }
            food = new Rectangle(setFoodX, setFoodY, 10, 10);
    }
 
    public void setScore(){
-       String value = "0";
-       JLabel scoreValue = new JLabel(value);
-       JLabel score = new JLabel("Your score");
-       scoreValue.setForeground(Color.red);
-       scoreValue.setFont(scoreValue.getFont().deriveFont(15.0f));
-       score.setFont(score.getFont().deriveFont(15.0f));
-       score.setForeground(Color.red);
-       score.setBounds(1,-40,100,100);
-       scoreValue.setBounds(100, -40, 100,100);
-       add(score);
-       add(scoreValue);
 
 
+       if((head.x == food.x) && (head.y == food.y)) {
+           intValue += 10;
+       }
+       stringValue = String.valueOf(intValue);
+       scoreValue.setText(stringValue);
+   }
 
+   public String getBestScore() throws FileNotFoundException {
+
+       File file = new File("score.txt");
+       Scanner scoreIn = new Scanner(file);
+
+       return scoreIn.nextLine();
+   }
+
+   public void setBestScore() throws FileNotFoundException {
+
+       PrintWriter write = new PrintWriter("score.txt");
+       write.println(stringValue);
+       write.close();
    }
 
    public void checkSpeed(){
@@ -157,6 +192,8 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener{
 
         if((head.x == food.x) && (head.y == food.y)) {
             snake.add(food);
+            intValue += 10;
+
         }
     }
 
@@ -252,6 +289,11 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener{
 
        else {
            timer.stop();
+           try {
+               setBestScore();
+           } catch (FileNotFoundException e) {
+               e.printStackTrace();
+           }
            gameOver();
 
        }
@@ -267,13 +309,18 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener{
             checkSpeed();
             checkColisionWithFood();
             move();
+            setScore();
             checkGameGoOn();
             repaint();
 
         } else {
             Object source = actionEvent.getSource();
             if (source == restart) {
-                new Window();
+                try {
+                    new Window();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
 
             }
             if (source == exit) {

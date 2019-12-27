@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.FileNotFoundException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -16,7 +17,11 @@ public class Main extends JPanel{
             @Override
             public void run() {
 
-                Window window = new Window();
+                try {
+                    Window window = new Window();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
 
 
             }
