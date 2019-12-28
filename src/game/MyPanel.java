@@ -43,6 +43,8 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener{
    public JLabel scoreValue;
    public JLabel bestScore;
    public JLabel bestScoreLabel;
+   public int bestScoreValue;
+   public String result;
 
 
 
@@ -87,6 +89,7 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener{
        bestScoreLabel.setBounds(570,-40,100,100);
        bestScoreLabel.setText("Best Score: ");
        add(bestScoreLabel);
+       bestScoreValue = Integer.parseInt(result);
 
        initGame();
        initFood();
@@ -132,8 +135,9 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener{
 
        File file = new File("score.txt");
        Scanner scoreIn = new Scanner(file);
+       result = scoreIn.nextLine();
 
-       return scoreIn.nextLine();
+       return result;
    }
 
    public void setBestScore() throws FileNotFoundException {
@@ -288,10 +292,12 @@ public class MyPanel extends JPanel implements ActionListener, KeyListener{
 
        else {
            timer.stop();
-           try {
-               setBestScore();
-           } catch (FileNotFoundException e) {
-               e.printStackTrace();
+           if(intValue > bestScoreValue) {
+               try {
+                   setBestScore();
+               } catch (FileNotFoundException e) {
+                   e.printStackTrace();
+               }
            }
            gameOver();
 
